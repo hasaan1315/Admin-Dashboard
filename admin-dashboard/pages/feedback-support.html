@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback & Support</title>
+    <link rel="stylesheet" href="/admin-dashboard/styles/feedback-support.css">
+</head>
+<body>
+    <div class="feedback-container">
+        <h2 class="page-title">Feedback and Support System</h2>
+        <!-- Feedback Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Feedback</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ali Khan</td>
+                    <td>Metro card recharge issue</td>
+                    <td><span class="status pending">Pending</span></td>
+                    <td>
+                        <button class="resolve-btn">Resolve</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fatima Ahmed</td>
+                    <td>Service delay complaint</td>
+                    <td><span class="status resolved">Resolved</span></td>
+                    <td>
+                        <button class="resolve-btn" disabled>Resolve</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

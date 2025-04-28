@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data & Security Management</title>
+    <link rel="stylesheet" href="styles/data-security.css">
+</head>
+<body>
+
+<div class="data-security-container">
+    <!-- Main Section Title -->
+    <h1 class="main-title">Data and Security Management</h1>
+
+    <!-- Access Logs Section -->
+    <h3 class="sub-heading">Access Logs</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Activity</th>
+                <th>Admin ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="logTable">
+            <tr>
+                <td>2025-03-09 10:15 AM</td>
+                <td>Login Success</td>
+                <td>Admin001</td>
+                <td><button class="delete-log-btn">Delete</button></td>
+            </tr>
+            <tr>
+                <td>2025-03-09 10:45 AM</td>
+                <td>Password Change</td>
+                <td>Admin001</td>
+                <td><button class="delete-log-btn">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Backup Button -->
+    <button id="backupDataBtn">Backup Data</button>
+</div>
+
+<script src="scripts/data-security.js"></script>
+</body>
+</html>

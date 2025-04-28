@@ -1,0 +1,130 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.sidebar-logo {
+    display: block;
+    margin: 10px auto;
+    max-width: 200px; /* Adjust size as needed */
+    height: auto;
+}
+
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #004080;
+    color: white;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    overflow-y: auto; /* Enables vertical scroll */
+    scrollbar-width: none; /* For Firefox */
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Edge, Safari) */
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 12px;
+    margin: 10px 0;  /* Increased margin for spacing */
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Optional: Add more padding to make the sidebar look spacious */
+.sidebar {
+    padding: 20px 15px; /* Adjusted padding */
+}
+
+.sidebar ul li:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.logout {
+    background-color: #d9534f !important;
+    text-align: center;
+    margin-top: auto;
+}
+
+.logout:hover {
+    background-color: #c9302c !important;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 300px;
+    flex: 1;
+    padding: 20px;
+}
+
+header {
+    background: #004080;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.card {
+    flex: 1;
+    background: #0288c2;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Chart Section */
+.charts {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    max-width: 400px;
+    max-height: 400px;
+}
