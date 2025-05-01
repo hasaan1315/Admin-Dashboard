@@ -20,7 +20,7 @@ const db = getFirestore(app);
 console.log("user-management.js loaded");
 
 // Load users when page is ready
-(async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   console.log("DOMContentLoaded event fired");
   const userTable = document.getElementById("userTable");
 

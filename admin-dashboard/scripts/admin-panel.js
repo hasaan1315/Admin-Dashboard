@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const script = document.createElement("script");
                     script.type = "module";
                     script.id = "user-management-script";
-                    script.src = "./scripts/user-management.js";
+                    script.src = "/admin-dashboard/scripts/user-management.js";
                     document.body.appendChild(script);
                 }        
  
@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load Dashboard by default
     loadPage('dashboard');
 });
+
 
     // Redirect to login page
     function logout() {
