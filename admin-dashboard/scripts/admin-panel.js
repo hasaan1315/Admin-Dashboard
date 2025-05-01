@@ -74,12 +74,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     const existingScript = document.getElementById("user-management-script");
                     if (existingScript) existingScript.remove();
                 
-                    const script = document.createElement("script");
-                    script.type = "module";
-                    script.id = "user-management-script";
-                    script.src = "/admin-dashboard/scripts/user-management.js";
-                    document.body.appendChild(script);
-                }        
+                    // Wait for the HTML to be fully inserted before loading the JS
+                    setTimeout(() => {
+                        const script = document.createElement("script");
+                        script.type = "module";
+                        script.id = "user-management-script";
+                        script.src = "./scripts/user-management.js";
+                        document.body.appendChild(script);
+                    }, 100); // <- small delay to let HTML render fully
+                }
+                     
  
                  // Add other pages here similarly
                  // if (page === "lost-items") { ... }
