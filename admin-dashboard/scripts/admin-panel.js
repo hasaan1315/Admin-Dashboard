@@ -55,24 +55,39 @@ document.addEventListener("DOMContentLoaded", function () {
             return; // Stop further execution
         }
 
-        // Fetch other pages
-        let pageUrl = `./pages/${page}.html?t=${new Date().getTime()}`;
-        console.log(`Fetching from: ${pageUrl}`);
-
-        fetch(pageUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(data => {
-                contentArea.innerHTML = data;
-            })
-            .catch(error => {
-                contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
-            });
-    }
+         // Dynamically fetch page content
+         const pageUrl = `./pages/${page}.html?t=${new Date().getTime()}`;
+         console.log(`Fetching from: ${pageUrl}`);
+ 
+         fetch(pageUrl)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! Status: ${response.status}`);
+                 }
+                 return response.text();
+             })
+             .then(data => {
+                 contentArea.innerHTML = data;
+ 
+                 // Conditionally load JS files for certain pages
+                 if (page === "user-management") {
+                    const existingScript = document.getElementById("user-management-script");
+                    if (existingScript) existingScript.remove();
+                
+                    const script = document.createElement("script");
+                    script.type = "module";
+                    script.id = "user-management-script";
+                    script.src = "./scripts/user-management.js";
+                    document.body.appendChild(script);
+                }        
+ 
+                 // Add other pages here similarly
+                 // if (page === "lost-items") { ... }
+             })
+             .catch(error => {
+                 contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
+             });
+     }
 
     // Attach globally
     window.loadPage = loadPage;
