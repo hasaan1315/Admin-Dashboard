@@ -6,22 +6,40 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    function loadPage(page) {
+    function waitForElement(selector, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+    
+            function check() {
+                const element = document.querySelector(selector);
+                if (element) {
+                    resolve(element);
+                } else if (Date.now() - startTime > timeout) {
+                    reject(new Error(`Element ${selector} not found within timeout`));
+                } else {
+                    requestAnimationFrame(check);
+                }
+            }
+    
+            check();
+        });
+    }
+    
+    async function loadPage(page) {
         console.log("Trying to load:", page);
-
+    
         // Clear previous content
         contentArea.innerHTML = "";
-
+    
         // If Dashboard is clicked, load it manually
         if (page === "dashboard") {
             console.log("Loading Dashboard...");
-
-            // Ensure that content is NOT added twice
+    
             if (document.querySelector("#dashboard-overview")) {
                 console.warn("Dashboard already loaded, skipping duplicate insertion.");
                 return;
             }
-
+    
             contentArea.innerHTML = `
                 <header>
                     <h2 id="dashboard-overview">Overview</h2>
@@ -36,8 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <canvas id="dataChart"></canvas>
                 </div>
             `;
-
-            // Reinitialize Chart.js
+    
             setTimeout(() => {
                 var ctx = document.getElementById('dataChart').getContext('2d');
                 new Chart(ctx, {
@@ -51,55 +68,42 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
             }, 100);
-
+    
             return; // Stop further execution
         }
-
-         // Dynamically fetch page content
-         const pageUrl = `./pages/${page}.html?t=${new Date().getTime()}`;
-         console.log(`Fetching from: ${pageUrl}`);
- 
-         fetch(pageUrl)
-             .then(response => {
-                 if (!response.ok) {
-                     throw new Error(`HTTP error! Status: ${response.status}`);
-                 }
-                 return response.text();
-             })
-             .then(data => {
-                 contentArea.innerHTML = data;
- 
-                 // Conditionally load JS files for certain pages
-                 if (page === "user-management") {
-                    const existingScript = document.getElementById("user-management-script");
-                    if (existingScript) existingScript.remove();
-                
-                    // Wait for the HTML to be fully inserted before loading the JS
-                    setTimeout(() => {
-                        const script = document.createElement("script");
-                        script.type = "module";
-                        script.id = "user-management-script";
-                        script.src = "./scripts/user-management.js";
-                        document.body.appendChild(script);
-                    }, 100); // <- small delay to let HTML render fully
+    
+        // Dynamically fetch page content
+        const pageUrl = `./pages/${page}.html?t=${new Date().getTime()}`;
+        console.log(`Fetching from: ${pageUrl}`);
+    
+        try {
+            const response = await fetch(pageUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.text();
+            contentArea.innerHTML = data;
+    
+            if (page === "user-management") {
+                await waitForElement("#userTable");
+                const module = await import("../scripts/user-management.js");
+                const userTable = document.getElementById("userTable");
+                if (userTable && module.loadUsers) {
+                    module.loadUsers(userTable);
                 }
-                     
- 
-                 // Add other pages here similarly
-                 // if (page === "lost-items") { ... }
-             })
-             .catch(error => {
-                 contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
-             });
-     }
-
+            }
+        } catch (error) {
+            contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
+        }
+    }
+    
+       
     // Attach globally
     window.loadPage = loadPage;
 
     // Load Dashboard by default
     loadPage('dashboard');
 });
-
 
     // Redirect to login page
     function logout() {

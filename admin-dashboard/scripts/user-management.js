@@ -1,6 +1,6 @@
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Your Firebase config
 const firebaseConfig = {
@@ -19,11 +19,26 @@ const db = getFirestore(app);
 
 console.log("user-management.js loaded");
 
-// Load users when page is ready
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("DOMContentLoaded event fired");
-  const userTable = document.getElementById("userTable");
+// Utility: Wait for element
+function waitForElement(selector, callback, interval = 100, timeout = 5000) {
+  const startTime = Date.now();
 
+  const check = () => {
+    const element = document.querySelector(selector);
+    if (element) {
+      callback(element);
+    } else if (Date.now() - startTime < timeout) {
+      setTimeout(check, interval);
+    } else {
+      console.error(`Element '${selector}' not found within ${timeout}ms.`);
+    }
+  };
+
+  check();
+}
+
+// Load users from Firestore and populate table
+export async function loadUsers(userTable) {
   try {
     console.log("Fetching users from Firestore...");
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -34,14 +49,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    querySnapshot.forEach(doc => {
-      const user = doc.data();
+    userTable.innerHTML = ""; // Clear existing rows before appending
+
+    querySnapshot.forEach(docSnap => {
+      const user = docSnap.data();
+      const userId = docSnap.id;
+      const currentStatus = user.status || 'Active';
+
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${user.name || 'N/A'}</td>
         <td>${user.email || 'N/A'}</td>
-        <td><span class="status active">Active</span></td>
-        <td><button class="deactivate-btn">Deactivate</button></td>
+        <td><span class="status ${currentStatus.toLowerCase()}">${currentStatus}</span></td>
+        <td><button class="status-btn" onclick="toggleStatus('${userId}', this)">${currentStatus === 'Active' ? 'Deactivate' : 'Activate'}</button></td>
       `;
       userTable.appendChild(row);
     });
@@ -49,16 +69,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error fetching users:", error);
     userTable.innerHTML = `<tr><td colspan="4">Error loading users.</td></tr>`;
   }
+}
+document.getElementById("userManagementBtn")?.addEventListener("click", () => {
+  const userTable = document.getElementById("userTable");
+  if (userTable) {
+    userTable.innerHTML = ""; // clear old rows to avoid duplicates
+    loadUsers(userTable);
+  }
 });
 
-// Filter users
+// Toggle user status in Firestore and update UI
+window.toggleStatus = async function (userId, button) {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    const currentStatus = userSnap.data().status || "Active";
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+
+    try {
+      await updateDoc(userRef, {
+        status: newStatus
+      });
+
+      // Update UI
+      const statusCell = button.parentNode.previousElementSibling;
+      statusCell.innerHTML = `<span class="status ${newStatus.toLowerCase()}">${newStatus}</span>`;
+      button.innerText = newStatus === "Active" ? "Deactivate" : "Activate";
+    } catch (err) {
+      console.error("Error updating user status:", err);
+    }
+  }
+};
+
+// Filter users by name or email
 window.filterUsers = function () {
   const input = document.getElementById("searchUser").value.toLowerCase();
   const rows = document.querySelectorAll("#userTable tr");
 
   rows.forEach(row => {
-    const name = row.cells[0].textContent.toLowerCase();
-    const email = row.cells[1].textContent.toLowerCase();
+    const name = row.cells[0]?.textContent.toLowerCase() || "";
+    const email = row.cells[1]?.textContent.toLowerCase() || "";
     row.style.display = (name.includes(input) || email.includes(input)) ? "" : "none";
   });
 };
+
+// Start when table is available
+waitForElement("#userTable", (userTable) => {
+  loadUsers(userTable);
+});
