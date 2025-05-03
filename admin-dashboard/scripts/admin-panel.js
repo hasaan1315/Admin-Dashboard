@@ -96,6 +96,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (module.initializeServiceAlerts) {
                     module.initializeServiceAlerts(); // ✅ this calls the setup code manually
                 }
+            }else if (page === "virtual-card") {
+                const module = await import("../scripts/virtual-card.js");
+                if (module && typeof module.initVirtualCardPage === "function") {
+                    module.initVirtualCardPage(); // manually run setup
+                }
             }
             
         } catch (error) {
@@ -103,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
   
-       
     // Attach globally
     window.loadPage = loadPage;
 

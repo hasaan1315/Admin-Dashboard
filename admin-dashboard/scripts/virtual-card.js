@@ -1,36 +1,97 @@
-document.addEventListener("DOMContentLoaded", function () {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-    let searchInput = document.getElementById("searchCard");
-    let tableRows = document.querySelectorAll("tbody tr");
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDaP4entNTsJPYqwqgaGVR90oYuVL4cWkA",
+  authDomain: "metrolink-c82f0.firebaseapp.com",
+  projectId: "metrolink-c82f0",
+  storageBucket: "metrolink-c82f0.appspot.com",
+  messagingSenderId: "588338131354",
+  appId: "1:588338131354:web:f1ed0d9cf977210f17ca23",
+  measurementId: "G-FPEZGMQ2SN"
+};
 
-    // Function to filter table based on search input
-    searchInput.addEventListener("input", function () {
-        let query = searchInput.value.toLowerCase();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-        tableRows.forEach(row => {
-            let cardNumber = row.cells[0].textContent.toLowerCase();
-            let userName = row.cells[1].textContent.toLowerCase();
+// Exported function to initialize the virtual card page
+export async function initVirtualCardPage() {
+  const tableBody = document.getElementById("virtualCardsTableBody");
+  const searchInput = document.getElementById("searchCard");
 
-            if (cardNumber.includes(query) || userName.includes(query)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
+  if (!tableBody || !searchInput) {
+    console.error("Missing DOM elements: check HTML structure.");
+    return;
+  }
+
+  async function loadCards() {
+    tableBody.innerHTML = "";
+  
+    const querySnapshot = await getDocs(collection(db, "virtualCards"));
+    querySnapshot.forEach((docSnap) => {
+      const card = docSnap.data();
+      const cardRef = docSnap.ref;
+  
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${card.cardId || "N/A"}</td>
+        <td>$${card.balance?.toFixed(2) || "0.00"}</td>
+        <td>${card.expiryDate || "N/A"}</td>
+        <td>${card.cvc || "N/A"}</td>
+        <td><span class="card-status ${card.status === "blocked" ? "blocked" : "active"}">
+          ${card.status || "active"}
+        </span></td>
+        <td>
+          <button class="blockBtn">
+            ${card.status === "blocked" ? "Unblock Card" : "Block Card"}
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+  
+      const blockBtn = row.querySelector(".blockBtn");
+      blockBtn.addEventListener("click", async () => {
+        const newStatus = card.status === "blocked" ? "active" : "blocked";
+  
+        try {
+          await updateDoc(cardRef, { status: newStatus });
+  
+          // Update local card object
+          card.status = newStatus;
+  
+          // Update status badge
+          const statusSpan = row.querySelector(".card-status");
+          statusSpan.textContent = newStatus;
+          statusSpan.classList.remove("active", "blocked");
+          statusSpan.classList.add(newStatus);
+  
+          // Update button label
+          blockBtn.textContent = newStatus === "blocked" ? "Unblock Card" : "Block Card";
+        } catch (error) {
+          console.error("Error updating card status:", error);
+        }
+      });
     });
+  }
+  
+  // Search filter
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    const rows = tableBody.querySelectorAll("tr");
 
-    // Function to block a card
-    document.querySelectorAll(".blockBtn").forEach(button => {
-        button.addEventListener("click", function () {
-            let row = this.closest("tr");
-            let statusCell = row.cells[4];
-
-            if (statusCell.textContent === "Active") {
-                statusCell.textContent = "Blocked";
-                this.textContent = "Blocked";
-                this.disabled = true;
-                this.style.background = "#777"; // Change button style when disabled
-            }
-        });
+    rows.forEach((row) => {
+      const cardId = row.cells[0].textContent.toLowerCase();
+      const balance = row.cells[1].textContent.toLowerCase();
+      row.style.display = cardId.includes(query) || balance.includes(query) ? "" : "none";
     });
-});
+  });
+
+  await loadCards();
+}

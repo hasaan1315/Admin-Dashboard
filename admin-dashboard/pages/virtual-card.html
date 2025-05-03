@@ -15,43 +15,20 @@
         <table>
             <thead>
                 <tr>
-                    <th>Card Number</th>
-                    <th>User</th>
+                    <th>Card ID</th>
                     <th>Balance</th>
-                    <th>Last Transaction</th>
+                    <th>Expiry Date</th>
+                    <th>CVC</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>1234-5678-9012-3456</td>
-                    <td>Ali Khan</td>
-                    <td>$50</td>
-                    <td>$10 - Metro Fare</td>
-                    <td>Active</td>
-                    <td><button class="blockBtn">Block Card</button></td>
-                </tr>
-                <tr>
-                    <td>9876-5432-1098-7654</td>
-                    <td>Sara Ahmed</td>
-                    <td>$20</td>
-                    <td>$5 - Metro Fare</td>
-                    <td>Active</td>
-                    <td><button class="blockBtn">Block Card</button></td>
-                </tr>
-                <tr>
-                    <td>1111-2222-3333-4444</td>
-                    <td>Usman Ali</td>
-                    <td>$75</td>
-                    <td>$15 - Top-Up</td>
-                    <td>Blocked</td>
-                    <td><button class="blockBtn" disabled>Blocked</button></td>
-                </tr>
+            <tbody id="virtualCardsTableBody">
+                <!-- Data will be loaded here dynamically -->
             </tbody>
         </table>
     </div>
 
-    <script src="./js/virtual-card.js"></script>
+    <script type="module" src="../scripts/virtual-card.js"></script>
 </body>
 </html>
