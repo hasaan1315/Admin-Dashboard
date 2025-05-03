@@ -91,12 +91,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (userTable && module.loadUsers) {
                     module.loadUsers(userTable);
                 }
+            } else if (page === "service-alerts") {
+                const module = await import("../scripts/service-alerts.js");
+                if (module.initializeServiceAlerts) {
+                    module.initializeServiceAlerts(); // ✅ this calls the setup code manually
+                }
             }
+            
         } catch (error) {
             contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
         }
     }
-    
+  
        
     // Attach globally
     window.loadPage = loadPage;

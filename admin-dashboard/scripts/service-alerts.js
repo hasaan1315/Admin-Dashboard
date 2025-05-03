@@ -1,57 +1,124 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let sendNowBtn = document.getElementById("sendNowBtn");
-    let scheduleBtn = document.getElementById("scheduleBtn");
-    let alertTitle = document.getElementById("alertTitle");
-    let alertMessage = document.getElementById("alertMessage");
-    let scheduleTime = document.getElementById("scheduleTime");
-    let alertsTable = document.getElementById("alertsTable");
+// Top of service-alerts.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-    // Function to add an alert to the table
-    function addAlertToTable(title, message, time) {
-        let newRow = document.createElement("tr");
-        newRow.innerHTML = `<td>${title}</td><td>${message}</td><td>${time}</td>`;
-        alertsTable.appendChild(newRow);
+// ✅ Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDaP4entNTsJPYqwqgaGVR90oYuVL4cWkA",
+  authDomain: "metrolink-c82f0.firebaseapp.com",
+  projectId: "metrolink-c82f0",
+  storageBucket: "metrolink-c82f0.appspot.com",
+  messagingSenderId: "588338131354",
+  appId: "1:588338131354:web:f1ed0d9cf977210f17ca23",
+  measurementId: "G-FPEZGMQ2SN"
+};
+
+// ✅ Initialize Firebase only once
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ✅ Main setup function (exported)
+export function initializeServiceAlerts() {
+  const titleInput = document.getElementById("alertTitle");
+  const messageInput = document.getElementById("alertMessage");
+  const scheduleInput = document.getElementById("scheduleTime");
+
+  const sendNowBtn = document.getElementById("sendNowBtn");
+  const scheduleBtn = document.getElementById("scheduleBtn");
+  const alertsTable = document.getElementById("alertsTable");
+
+  if (!titleInput || !messageInput || !sendNowBtn || !alertsTable) {
+    console.error("One or more DOM elements for service alerts not found.");
+    return;
+  }
+
+  sendNowBtn.addEventListener("click", async () => {
+    console.log("Send Now button clicked");
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!title || !message) {
+      alert("Title and Message are required.");
+      return;
     }
 
-    // Send Now Button Click Event
-    sendNowBtn.addEventListener("click", function () {
-        let title = alertTitle.value.trim();
-        let message = alertMessage.value.trim();
+    try {
+      await addDoc(collection(db, "alerts"), {
+        title,
+        message,
+        timeSent: serverTimestamp(),
+        scheduled: false
+      });
 
-        if (title === "" || message === "") {
-            alert("Please enter both title and message!");
-            return;
-        }
+      alert("Alert sent!");
+      titleInput.value = "";
+      messageInput.value = "";
+      scheduleInput.value = "";
+      loadAlerts();
+    } catch (err) {
+      console.error("Error sending alert:", err);
+    }
+  });
 
-        let currentTime = new Date().toLocaleString(); // Get current date and time
-        addAlertToTable(title, message, currentTime);
+  // Placeholder for scheduleBtn logic (you can fill in if needed)
+  scheduleBtn?.addEventListener("click", async () => {
+    console.log("Schedule button clicked");
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+    const scheduleTime = scheduleInput.value;
+  
+    if (!title || !message || !scheduleTime) {
+      alert("All fields are required to schedule an alert.");
+      return;
+    }
+  
+    try {
+      await addDoc(collection(db, "alerts"), {
+        title,
+        message,
+        scheduled: true,
+        scheduledTime: new Date(scheduleTime),
+        createdAt: serverTimestamp()
+      });
+  
+      alert("Alert scheduled!");
+      titleInput.value = "";
+      messageInput.value = "";
+      scheduleInput.value = "";
+      loadAlerts();
+    } catch (err) {
+      console.error("Error scheduling alert:", err);
+    }
+  });  
 
-        // Clear input fields
-        alertTitle.value = "";
-        alertMessage.value = "";
-        scheduleTime.value = "";
-        
-        alert("Alert sent successfully!");
-    });
+  async function loadAlerts() {
+    alertsTable.innerHTML = "";
 
-    // Schedule Button Click Event
-    scheduleBtn.addEventListener("click", function () {
-        let title = alertTitle.value.trim();
-        let message = alertMessage.value.trim();
-        let schedule = scheduleTime.value;
+    try {
+      const snapshot = await getDocs(collection(db, "alerts"));
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const time = data.timeSent?.toDate?.().toLocaleString() || "N/A";
 
-        if (title === "" || message === "" || schedule === "") {
-            alert("Please enter title, message, and schedule time!");
-            return;
-        }
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.title || "No Title"}</td>
+          <td>${data.message || "No Message"}</td>
+          <td>${time}</td>
+        `;
+        alertsTable.appendChild(row);
+      });
+    } catch (err) {
+      console.error("Error loading alerts:", err);
+    }
+  }
 
-        addAlertToTable(title, message, schedule);
-        
-        // Clear input fields
-        alertTitle.value = "";
-        alertMessage.value = "";
-        scheduleTime.value = "";
-
-        alert("Alert scheduled successfully!");
-    });
-});
+  // Load alerts on init
+  loadAlerts();
+}
