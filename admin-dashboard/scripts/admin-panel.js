@@ -48,6 +48,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     contentArea.innerHTML = "";
 
+    // Remove existing data-security CSS if any
+    const existingDataSecurityLink = document.getElementById("data-security-css");
+    if (existingDataSecurityLink) {
+      existingDataSecurityLink.remove();
+    }
+
     if (page === "dashboard") {
       console.log("Loading Dashboard...");
 
@@ -88,6 +94,15 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Add data-security CSS if loading data-security page
+    if (page === "data-security") {
+      const link = document.createElement("link");
+      link.id = "data-security-css";
+      link.rel = "stylesheet";
+      link.href = "/admin-dashboard/styles/data-security.css";
+      document.head.appendChild(link);
+    }
+
     const pageUrl = `./pages/${page}.html?t=${new Date().getTime()}`;
     console.log(`Fetching from: ${pageUrl}`);
 
@@ -121,7 +136,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (module && typeof module.initFeedbackSupport === "function") {
           module.initFeedbackSupport();
         }
+      } else if (page === "data-security") {
+        const module = await import("../scripts/data-security.js");
+        if (module && typeof module.initDataSecurity === "function") {
+          module.initDataSecurity();
+        }
       }
+      
     } catch (error) {
       contentArea.innerHTML = `<p style="color: red;">Error loading page: ${error.message}</p>`;
     }

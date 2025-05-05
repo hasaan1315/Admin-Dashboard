@@ -22,7 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener("DOMContentLoaded", async function () {
+export async function initDataSecurity() {
   const logTable = document.getElementById("logTable");
   const backupBtn = document.getElementById("backupDataBtn");
 
@@ -89,4 +89,4 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   setInterval(checkSuspiciousActivity, 15000); // Every 15s
-});
+}
