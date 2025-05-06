@@ -4,7 +4,9 @@ import {
   collection,
   getDocs,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  addDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Firebase Configuration
@@ -38,24 +40,41 @@ export async function initFeedbackSupport() {
       const data = docSnap.data();
       const docRef = docSnap.ref;
 
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${data.userName}</td>
-        <td>${data.message}</td>
-        <td><span class="status ${data.status === 'resolved' ? 'resolved' : 'pending'}">${capitalize(data.status)}</span></td>
-        <td>
-          <button class="resolve-btn" ${data.status === "resolved" ? "disabled" : ""}>Resolve</button>
-          <button class="delete-btn">Delete</button>
-        </td>
-      `;
+      var statusClass = data.status === 'resolved' ? 'resolved' : 'pending';
+      var statusText = capitalize(data.status);
+
+      var row = document.createElement("tr");
+      row.innerHTML = "<td>" + data.userName + "</td>" +
+                      "<td>" + (data.email || '') + "</td>" +
+                      "<td>" + data.message + "</td>" +
+                      "<td><span class='status " + statusClass + "'>" + statusText + "</span></td>" +
+                      "<td>" +
+                        "<button class='resolve-btn' " + (data.status === "resolved" ? "disabled" : "") + ">Resolve</button>" +
+                        "<button class='delete-btn'>Delete</button>" +
+                      "</td>";
 
       // Event: Resolve
       const resolveBtn = row.querySelector(".resolve-btn");
       resolveBtn.addEventListener("click", async () => {
-        await updateDoc(docRef, { status: "resolved" });
-        row.querySelector("span").textContent = "Resolved";
-        row.querySelector("span").className = "status resolved";
-        resolveBtn.disabled = true;
+        try {
+          // Add notification document to notify user
+          if (data.email) {
+            await addDoc(collection(db, "notifications"), {
+              email: data.email,
+              message: "Your issue has been resolved by the admin.",
+              timestamp: serverTimestamp(),
+              read: false
+            });
+          }
+
+          // Update feedback status to resolved
+          await updateDoc(docRef, { status: "resolved" });
+          row.querySelector("span").textContent = "Resolved";
+          row.querySelector("span").className = "status resolved";
+          resolveBtn.disabled = true;
+        } catch (error) {
+          console.error("Error resolving feedback and sending notification:", error);
+        }
       });
 
       // Event: Delete

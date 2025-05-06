@@ -57,11 +57,14 @@ export async function loadUsers(userTable) {
       const currentStatus = user.status || 'Active';
 
       const row = document.createElement("tr");
+      const buttonText = currentStatus === 'Active' ? 'Deactivate' : 'Activate';
+      const buttonColor = buttonText === 'Activate' ? 'green' : 'red';
+
       row.innerHTML = `
         <td>${user.name || 'N/A'}</td>
         <td>${user.email || 'N/A'}</td>
         <td><span class="status ${currentStatus.toLowerCase()}">${currentStatus}</span></td>
-        <td><button class="status-btn" onclick="toggleStatus('${userId}', this)">${currentStatus === 'Active' ? 'Deactivate' : 'Activate'}</button></td>
+        <td><button class="status-btn" onclick="toggleStatus('${userId}', this)" style="background-color: ${buttonColor}; color: white;">${buttonText}</button></td>
       `;
       userTable.appendChild(row);
     });
@@ -95,7 +98,13 @@ window.toggleStatus = async function (userId, button) {
       // Update UI
       const statusCell = button.parentNode.previousElementSibling;
       statusCell.innerHTML = `<span class="status ${newStatus.toLowerCase()}">${newStatus}</span>`;
-      button.innerText = newStatus === "Active" ? "Deactivate" : "Activate";
+
+      const buttonText = newStatus === "Active" ? "Deactivate" : "Activate";
+      const buttonColor = buttonText === "Activate" ? "green" : "red";
+
+      button.innerText = buttonText;
+      button.style.backgroundColor = buttonColor;
+      button.style.color = "white";
     } catch (err) {
       console.error("Error updating user status:", err);
     }

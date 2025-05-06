@@ -36,15 +36,22 @@ th {
     color: white;
 }
 
-.status.active {
-    background: green;
+  .status.active {
+    background-color: green;
     color: white;
-}
-
-.status.inactive {
-    background: red;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
+  .status.inactive {
+    background-color: red;
     color: white;
-}
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
 .status-btn {
     background-color: rgb(166, 166, 166);
     color: white;

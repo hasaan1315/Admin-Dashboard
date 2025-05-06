@@ -136,6 +136,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (module && typeof module.initFeedbackSupport === "function") {
           module.initFeedbackSupport();
         }
+      } else if (page === "lost-items") {
+        const module = await import("../scripts/lost-items.js");
+        if (module && typeof module.initLostItems === "function") {
+          module.initLostItems();
+        }
       } else if (page === "data-security") {
         const module = await import("../scripts/data-security.js");
         if (module && typeof module.initDataSecurity === "function") {

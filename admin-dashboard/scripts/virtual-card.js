@@ -40,6 +40,9 @@ export async function initVirtualCardPage() {
       const cardRef = docSnap.ref;
   
       const row = document.createElement("tr");
+      const buttonText = card.status === "blocked" ? "Unblock Card" : "Block Card";
+      const buttonColor = buttonText === "Block Card" ? "red" : "green";
+
       row.innerHTML = `
         <td>${card.cardId || "N/A"}</td>
         <td>$${card.balance?.toFixed(2) || "0.00"}</td>
@@ -49,8 +52,8 @@ export async function initVirtualCardPage() {
           ${card.status || "active"}
         </span></td>
         <td>
-          <button class="blockBtn">
-            ${card.status === "blocked" ? "Unblock Card" : "Block Card"}
+          <button class="blockBtn" style="background-color: ${buttonColor}; color: white;">
+            ${buttonText}
           </button>
         </td>
       `;
@@ -72,8 +75,12 @@ export async function initVirtualCardPage() {
           statusSpan.classList.remove("active", "blocked");
           statusSpan.classList.add(newStatus);
   
-          // Update button label
-          blockBtn.textContent = newStatus === "blocked" ? "Unblock Card" : "Block Card";
+          // Update button label and color
+          const newButtonText = newStatus === "blocked" ? "Unblock Card" : "Block Card";
+          const newButtonColor = newButtonText === "Block Card" ? "red" : "green";
+          blockBtn.textContent = newButtonText;
+          blockBtn.style.backgroundColor = newButtonColor;
+          blockBtn.style.color = "white";
         } catch (error) {
           console.error("Error updating card status:", error);
         }

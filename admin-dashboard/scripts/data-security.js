@@ -79,14 +79,15 @@ export async function initDataSecurity() {
     alert("Data backup completed successfully!");
   });
 
-  // Suspicious activity detection
-  function checkSuspiciousActivity() {
+   //Suspicious activity detection
+ /* function checkSuspiciousActivity() {
     const suspicious = Math.random() < 0.2; // 20% chance
-    if (suspicious) {
+if (suspicious) {
       alert("Suspicious activity detected! Logging out...");
       window.location.href = "admin-login.html";
     }
   }
 
   setInterval(checkSuspiciousActivity, 15000); // Every 15s
+}*/
 }

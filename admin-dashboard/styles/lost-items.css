@@ -54,8 +54,7 @@ th {
     color: white;
 }
 
-/* Buttons */
-.found-btn {
+.resolve-btn {
     background: green;
     color: white;
     padding: 8px 12px;
@@ -64,11 +63,8 @@ th {
     cursor: pointer;
 }
 
-.not-found-btn {
-    background: red;
+.resolve-btn:disabled {
+    background: rgb(255, 0, 0);
     color: white;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    cursor: not-allowed;
 }
