@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDaP4entNTsJPYqwqgaGVR90oYuVL4cWkA",
@@ -43,6 +43,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  async function loadDashboardStats() {
+    try {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const lostItemsSnapshot = await getDocs(collection(db, "LostItems"));
+      const serviceAlertsSnapshot = await getDocs(collection(db, "alerts"));
+      const paymentsSnapshot = await getDocs(collection(db, "virtualCards"));
+
+      return {
+        totalUsers: usersSnapshot.size,
+        lostItems: lostItemsSnapshot.size,
+        serviceAlerts: serviceAlertsSnapshot.size,
+        payments: paymentsSnapshot.size,
+      };
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      return {
+        totalUsers: 0,
+        lostItems: 0,
+        serviceAlerts: 0,
+        payments: 0,
+      };
+    }
+  }
+
   async function loadPage(page) {
     console.log("Trying to load:", page);
 
@@ -62,15 +86,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+      const stats = await loadDashboardStats();
+
       contentArea.innerHTML = `
         <header>
           <h2 id="dashboard-overview">Overview</h2>
         </header>
         <div class="stats">
-          <div class="card">Total Users <span>120</span></div>
-          <div class="card">Lost Items <span>45</span></div>
-          <div class="card">Service Alerts <span>5</span></div>
-          <div class="card">Payments <span>350</span></div>
+          <div class="card">Total Users <span>${stats.totalUsers}</span></div>
+          <div class="card">Lost Items <span>${stats.lostItems}</span></div>
+          <div class="card">Service Alerts <span>${stats.serviceAlerts}</span></div>
+          <div class="card">Payments <span>${stats.payments}</span></div>
         </div>
         <div class="charts">
           <canvas id="dataChart"></canvas>
@@ -84,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
           data: {
             labels: ['Users', 'Lost Items', 'Service Alerts', 'Payments'],
             datasets: [{
-              data: [120, 45, 5, 350],
+              data: [stats.totalUsers, stats.lostItems, stats.serviceAlerts, stats.payments],
               backgroundColor: ['#007bff', '#ffc107', '#dc3545', '#28a745']
             }]
           }

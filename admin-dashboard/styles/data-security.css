@@ -64,7 +64,7 @@ button {
 }
 
 .delete-log-btn {
-    background-color: #dc3545;
+    background-color: rgb(255, 0, 0);
     color: white;
 }
 

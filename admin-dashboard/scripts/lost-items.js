@@ -5,6 +5,8 @@ import {
   getDocs,
   doc,
   updateDoc,
+  addDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -58,11 +60,44 @@ async function fetchLostItems() {
                         "<td>" + (data.email || 'N/A') + "</td>" +
                         "<td>" + (data.itemDescription || 'N/A') + "</td>" +
                         "<td>" + (data.location || 'N/A') + "</td>" +
-                        "<td><span class='status " + status + "'>" + (data.status || 'Pending') + "</span></td>" +
+                        "<td><span class='status resolved'>Resolved</span></td>" +
                         "<td><button class='resolve-btn found-btn' disabled style='background-color: rgb(255, 0, 0); color: white;'>Item Found</button></td>";
       }
 
       lostItemsTable.appendChild(row);
+
+      if (status === 'pending') {
+        const resolveBtn = row.querySelector(".resolve-btn");
+        resolveBtn.addEventListener("click", async () => {
+          try {
+            if (data.email) {
+              await addDoc(collection(db, "notifications"), {
+                email: data.email,
+                message: "Your lost item has been marked as found by the admin.",
+                timestamp: serverTimestamp(),
+                read: false
+              });
+            }
+
+            const docRef = doc(db, "LostItems", docId);
+            await updateDoc(docRef, { status: "resolved" });
+
+            const statusSpan = row.querySelector(".status");
+            statusSpan.classList.remove("pending");
+            statusSpan.classList.add("resolved");
+            statusSpan.textContent = "Resolved";
+
+            resolveBtn.textContent = "Item Found";
+            resolveBtn.style.backgroundColor = "rgb(255, 0, 0)";
+            resolveBtn.style.color = "white";
+            resolveBtn.classList.add("found-btn");
+            resolveBtn.classList.remove("resolve-btn");
+            resolveBtn.disabled = true;
+          } catch (error) {
+            console.error("Error updating lost item status and sending notification:", error);
+          }
+        });
+      }
     });
   } catch (error) {
     console.error("Error fetching lost items:", error);
@@ -85,7 +120,7 @@ function attachButtonListeners() {
       console.log("Resolve button clicked");
       const row = target.closest("tr");
       const docId = row.cells[0].textContent;
-      updateStatus(docId, "found", row, target);
+      updateStatus(docId, "resolved", row, target);
     }
   });
   listenersAttached = true;
@@ -100,8 +135,8 @@ async function updateStatus(docId, newStatus, row, button) {
 
     const statusSpan = row.querySelector(".status");
     statusSpan.classList.remove("pending");
-    statusSpan.classList.add("found");
-    statusSpan.textContent = "Item Found";
+    statusSpan.classList.add("resolved");
+    statusSpan.textContent = "Resolved";
 
     if (button) {
       button.textContent = "Item Found";
