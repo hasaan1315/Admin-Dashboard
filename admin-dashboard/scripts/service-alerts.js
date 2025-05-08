@@ -98,29 +98,26 @@ export function initializeServiceAlerts() {
   });  
 
   async function loadAlerts() {
-    const tbody = alertsTable.querySelector("tbody");
-    tbody.innerHTML = ""; // Clear existing rows
-  
+    alertsTable.innerHTML = "";
+
     try {
       const snapshot = await getDocs(collection(db, "alerts"));
       snapshot.forEach(doc => {
         const data = doc.data();
-        const timeSent = data.timeSent?.toDate?.().toLocaleString() || "N/A";
-        const scheduledTime = data.scheduledTime?.toDate?.().toLocaleString() || "N/A";
-  
+        const time = data.timeSent?.toDate?.().toLocaleString() || "N/A";
+
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.title || "No Title"}</td>
           <td>${data.message || "No Message"}</td>
-          <td>${timeSent}</td>
-          <td>${data.scheduled ? scheduledTime : "-"}</td>
+          <td>${time}</td>
         `;
-        tbody.appendChild(row);
+        alertsTable.appendChild(row);
       });
     } catch (err) {
       console.error("Error loading alerts:", err);
     }
-  }  
+  }
 
   // Load alerts on init
   loadAlerts();
