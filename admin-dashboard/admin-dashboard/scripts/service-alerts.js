@@ -24,6 +24,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ✅ Main setup function (exported)
+
 export function initializeServiceAlerts() {
   const titleInput = document.getElementById("alertTitle");
   const messageInput = document.getElementById("alertMessage");
@@ -38,7 +39,9 @@ export function initializeServiceAlerts() {
     return;
   }
 
-  sendNowBtn.addEventListener("click", async () => {
+  sendNowBtn.replaceWith(sendNowBtn.cloneNode(true));
+  const newSendNowBtn = document.getElementById("sendNowBtn");
+  newSendNowBtn.addEventListener("click", async () => {
     console.log("Send Now button clicked");
     const title = titleInput.value.trim();
     const message = messageInput.value.trim();
@@ -67,46 +70,50 @@ export function initializeServiceAlerts() {
   });
 
   // Placeholder for scheduleBtn logic (you can fill in if needed)
-  scheduleBtn?.addEventListener("click", async () => {
-    console.log("Schedule button clicked");
-    const title = titleInput.value.trim();
-    const message = messageInput.value.trim();
-    const scheduleTime = scheduleInput.value;
-  
-    if (!title || !message || !scheduleTime) {
-      alert("All fields are required to schedule an alert.");
-      return;
-    }
-  
-    try {
-      await addDoc(collection(db, "alerts"), {
-        title,
-        message,
-        scheduled: true,
-        scheduledTime: new Date(scheduleTime),
-        createdAt: serverTimestamp()
-      });
-  
-      alert("Alert scheduled!");
-      titleInput.value = "";
-      messageInput.value = "";
-      scheduleInput.value = "";
-      loadAlerts();
-    } catch (err) {
-      console.error("Error scheduling alert:", err);
-    }
-  });  
+  if (scheduleBtn) {
+    scheduleBtn.replaceWith(scheduleBtn.cloneNode(true));
+    const newScheduleBtn = document.getElementById("scheduleBtn");
+    newScheduleBtn.addEventListener("click", async () => {
+      console.log("Schedule button clicked");
+      const title = titleInput.value.trim();
+      const message = messageInput.value.trim();
+      const scheduleTime = scheduleInput.value;
+    
+      if (!title || !message || !scheduleTime) {
+        alert("All fields are required to schedule an alert.");
+        return;
+      }
+    
+      try {
+        await addDoc(collection(db, "alerts"), {
+          title,
+          message,
+          scheduled: true,
+          scheduledTime: new Date(scheduleTime),
+          createdAt: serverTimestamp()
+        });
+    
+        alert("Alert scheduled!");
+        titleInput.value = "";
+        messageInput.value = "";
+        scheduleInput.value = "";
+        loadAlerts();
+      } catch (err) {
+        console.error("Error scheduling alert:", err);
+      }
+    });
+  }
 
   async function loadAlerts() {
-    const tbody = alertsTable.querySelector("tbody");
+    const tbody = alertsTable; // alertsTable is already tbody element
     tbody.innerHTML = ""; // Clear existing rows
   
     try {
       const snapshot = await getDocs(collection(db, "alerts"));
       snapshot.forEach(doc => {
         const data = doc.data();
-        const timeSent = data.timeSent?.toDate?.().toLocaleString() || "N/A";
-        const scheduledTime = data.scheduledTime?.toDate?.().toLocaleString() || "N/A";
+        const timeSent = data.timeSent?.toDate?.().toLocaleString() || "-";
+        const scheduledTime = data.scheduledTime?.toDate?.().toLocaleString() || "-";
   
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -120,8 +127,10 @@ export function initializeServiceAlerts() {
     } catch (err) {
       console.error("Error loading alerts:", err);
     }
-  }  
+  }
+  
 
   // Load alerts on init
   loadAlerts();
 }
+

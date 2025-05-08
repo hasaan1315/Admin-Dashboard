@@ -1,0 +1,97 @@
+/* admin_login.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(-45deg, #45abff, #00D4FF, #f2ff36, hsl(77, 100%, 47%));
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    margin: 0;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 350px;
+}
+
+h2 {
+    color: #000000;
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.welcome {
+    color: #00408f;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.logo {
+    width: 200px;
+    margin-bottom: 15px;
+}
+
+input {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 10px 0;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background: #00408f;
+    color: white;
+    padding: 12px;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+a {
+    color: #00408f;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    color: #00408f;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.7); /* Adjust transparency */
+    backdrop-filter: blur(10px); /* Slight blur for a glass effect */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 350px;
+}

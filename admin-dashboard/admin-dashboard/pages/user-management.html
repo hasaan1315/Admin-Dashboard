@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Management</title>
+  <link rel="stylesheet" href="/admin-dashboard/styles/user-management.css">
+</head>
+<body>
+  <div class="user-management-container">
+    <div class="content-section">
+      <h2 class="user-management-title">User Management</h2>
+
+      <input type="text" id="searchUser" placeholder="Search users..." onkeyup="filterUsers()" />
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTable">
+          <!-- Dynamic user rows will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Your custom script -->
+  <script type="module" src="../scripts/user-management.js"></script>
+</body>
+</html>

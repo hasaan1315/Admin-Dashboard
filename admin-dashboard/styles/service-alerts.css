@@ -1,92 +1,92 @@
-/* General Styles */
+/* Styles for Service Alerts page */
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  margin: 20px;
 }
 
-/* Container */
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+h1 {
+  color: #333;
 }
 
-/* Heading */
-h2, h3 {
-    text-align: center;
-    margin-bottom: 20px;
+form {
+  margin-bottom: 20px;
 }
 
-/* Form Styling */
-.alert-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
+label {
+  display: inline-block;
+  width: 120px;
+  font-weight: bold;
 }
 
-.alert-form label {
-    font-weight: bold;
+input[type="text"],
+textarea,
+input[type="datetime-local"] {
+  width: 300px;
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.alert-form input,
-.alert-form textarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+textarea {
+  height: 80px;
+  resize: vertical;
 }
 
-.alert-form textarea {
-    height: 80px;
-    resize: none;
+button {
+  padding: 8px 15px;
+  margin-right: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-/* Form Buttons */
-.form-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
+button:hover {
+  background-color: #0056b3;
 }
 
-.alert-form button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.alert-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Table Styling */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 table, th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
 }
 
 th {
-    background-color: #007bff;
-    color: white;
+  background-color: #f2f2f2;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+/* Styles for Scheduled Time column */
+th:nth-child(4),
+td:nth-child(4) {
+  width: 180px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  input[type="text"],
+  textarea,
+  input[type="datetime-local"] {
+    width: 100%;
+  }
+
+  label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }
