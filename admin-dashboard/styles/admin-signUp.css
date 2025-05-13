@@ -21,11 +21,28 @@ body {
     width: 350px;
 }
 
+/* Stylish text style for headings and paragraphs */
 h2 {
     color: #000000;
     margin-bottom: 10px;
-    font-size: 24px;
+    font-size: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
 }
+
+p {
+    color: #00408f;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    font-size: 1rem;
+    text-transform: none;
+}
+
 
 .welcome {
     color: #00408f;
